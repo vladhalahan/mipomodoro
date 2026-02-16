@@ -3,6 +3,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    '^expo/src/winter$': '<rootDir>/jest-mocks/expo-winter.js',
   },
   testMatch: [
     '**/__tests__/**/*.(test|spec).(ts|tsx|js)',
