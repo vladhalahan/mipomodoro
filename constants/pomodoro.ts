@@ -1,5 +1,5 @@
-export const WORK_DURATION_SEC = 1 * 60; // 40 min
-export const REST_DURATION_SEC = 0.5 * 60; // 20 min
+export const WORK_DURATION_SEC = 40 * 60; // 40 min
+export const REST_DURATION_SEC = 20 * 60; // 20 min
 
 export const MIN_TASK_NAME_LENGTH = 3;
 
