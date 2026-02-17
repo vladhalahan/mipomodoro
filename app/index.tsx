@@ -8,12 +8,14 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Notifications from 'expo-notifications';
 import { FillableVessel } from '@/components/FillableVessel';
 import { styles } from './index.styles';
 import {
   WORK_DURATION_SEC,
   REST_DURATION_SEC,
   MIN_TASK_NAME_LENGTH,
+  NOTICE_THRESHOLD,
   type TimerPhase,
 } from '@/constants/pomodoro';
 
@@ -29,6 +31,7 @@ export default function PomodoroScreen() {
   const [elapsed, setElapsed] = useState(0);
   const [taskCompleted, setTaskCompleted] = useState(false);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const noticeShownRef = useRef<'coffee' | 'work' | null>(null);
 
   const isWork = phase === 'work' || phase === 'paused_work';
   const isRest = phase === 'rest' || phase === 'paused_rest';
@@ -54,6 +57,22 @@ export default function PomodoroScreen() {
     }
   }, []);
 
+  // Request notification permission and set Android channel (required for local notifications)
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('pomodoro', {
+          name: 'Pomodoro reminders',
+          importance: Notifications.AndroidImportance.DEFAULT,
+        });
+      }
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== 'granted') {
+        await Notifications.requestPermissionsAsync();
+      }
+    })();
+  }, []);
+
   useEffect(() => {
     if (!isRunning) {
       clearTick();
@@ -69,13 +88,10 @@ export default function PomodoroScreen() {
           }
           if (phase === 'work') {
             setPhase('rest');
-            setElapsed(0);
           } else {
-            // Rest ended: start next focus round (cycle until user marks complete)
             setPhase('work');
-            setElapsed(0);
           }
-          return e;
+          return 0; // reset elapsed so we don't show negative remaining
         }
         return next;
       });
@@ -114,6 +130,7 @@ export default function PomodoroScreen() {
       clearTick();
       setPhase('idle');
       setElapsed(0);
+      setTaskName('');
     }
   };
 
@@ -129,6 +146,44 @@ export default function PomodoroScreen() {
       : phase === 'rest' || phase === 'paused_rest'
         ? 'Rest'
         : '';
+
+  const restThreshold = Math.ceil(REST_DURATION_SEC * NOTICE_THRESHOLD);
+  const workThreshold = Math.ceil(WORK_DURATION_SEC * NOTICE_THRESHOLD);
+  // Coffee Break = last part of focus (almost time for a break)
+  const showCoffeeBreak =
+    (phase === 'work' || phase === 'paused_work') &&
+    remaining > 0 &&
+    remaining <= workThreshold;
+  // Back to work = last part of rest (almost time to focus again)
+  const showBackToWork =
+    (phase === 'rest' || phase === 'paused_rest') &&
+    remaining > 0 &&
+    remaining <= restThreshold;
+
+  // Local notification: once when entering threshold (works in background too)
+  useEffect(() => {
+    if (showCoffeeBreak && noticeShownRef.current !== 'coffee') {
+      noticeShownRef.current = 'coffee';
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Mipomodoro',
+          body: '☕ Coffee Break',
+        },
+        trigger: null,
+      }).catch(() => {});
+    } else if (showBackToWork && noticeShownRef.current !== 'work') {
+      noticeShownRef.current = 'work';
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Mipomodoro',
+          body: '💼 Back to work',
+        },
+        trigger: null,
+      }).catch(() => {});
+    } else if (!showCoffeeBreak && !showBackToWork) {
+      noticeShownRef.current = null;
+    }
+  }, [showCoffeeBreak, showBackToWork]);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>

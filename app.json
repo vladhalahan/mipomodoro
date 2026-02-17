@@ -27,6 +27,7 @@
     },
     "plugins": [
       "expo-router",
+      ["expo-notifications", { "defaultChannel": "pomodoro" }],
       [
         "expo-splash-screen",
         {
