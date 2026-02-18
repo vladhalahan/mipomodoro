@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { FillableVessel } from '@/components/FillableVessel';
 import { styles } from './index.styles';
 import {
@@ -56,6 +57,18 @@ export default function PomodoroScreen() {
       tickRef.current = null;
     }
   }, []);
+
+  // Keep screen on while timer is running (work or rest), allow lock when idle or paused
+  useEffect(() => {
+    if (isRunning) {
+      activateKeepAwakeAsync();
+    } else {
+      deactivateKeepAwake();
+    }
+    return () => {
+      deactivateKeepAwake();
+    };
+  }, [isRunning]);
 
   // Request notification permission and set Android channel (required for local notifications)
   useEffect(() => {
