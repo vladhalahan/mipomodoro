@@ -1,0 +1,56 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background rounded square -->
+  <rect width="400" height="400" rx="80" fill="#4A5173"/>
+  
+  <!-- Cup container with white border -->
+  <g transform="translate(200, 200)">
+    <!-- White outline/border -->
+    <rect x="-115" y="-115" width="230" height="230" rx="35" fill="white"/>
+    
+    <!-- Inner black border -->
+    <rect x="-105" y="-105" width="210" height="210" rx="28" fill="none" stroke="#000000" stroke-width="10"/>
+    
+    <!-- Coffee fill (left half - dark brown) with rounded corners -->
+    <path d="M -95 -77 Q -95 -95 -77 -95 L 0 -95 L 0 95 L -77 95 Q -95 95 -95 77 Z" fill="#6B4423"/>
+    
+    <!-- Bubbles in coffee -->
+    <circle cx="-70" cy="-70" r="4" fill="#8B6F47" opacity="0.5"/>
+    <circle cx="-50" cy="-80" r="3" fill="#8B6F47" opacity="0.4"/>
+    <circle cx="-60" cy="-40" r="3.5" fill="#8B6F47" opacity="0.5"/>
+    
+    <!-- Empty part (right half - beige) with rounded corners -->
+    <path d="M 0 -95 L 77 -95 Q 95 -95 95 -77 L 95 77 Q 95 95 77 95 L 0 95 Z" fill="#F5DEB3"/>
+    
+    <!-- Cup handle (white with black outline) -->
+    <path d="M 105 -10 Q 135 -10 135 30 Q 135 70 105 70" 
+          fill="white" 
+          stroke="#000000" 
+          stroke-width="10"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    
+    <!-- Vertical divider line -->
+    <line x1="0" y1="-95" x2="0" y2="95" 
+          stroke="#000000" 
+          stroke-width="8"/>
+    
+    <!-- Face elements -->
+    <!-- Left eye -->
+    <rect x="-50" y="-5" width="14" height="22" rx="2" fill="#000000"/>
+    
+    <!-- Right eye -->
+    <rect x="36" y="-5" width="14" height="22" rx="2" fill="#000000"/>
+    
+    <!-- Left cheek -->
+    <rect x="-65" y="30" width="24" height="14" rx="3" fill="#FF6B7A"/>
+    
+    <!-- Right cheek -->
+    <rect x="41" y="30" width="24" height="14" rx="3" fill="#FF6B7A"/>
+    
+    <!-- Mouth (straight line) -->
+    <rect x="-40" y="60" width="80" height="10" rx="5" fill="#000000"/>
+  </g>
+  
+  <!-- Text at bottom -->
+  <text x="200" y="360" font-family="Arial, sans-serif" font-size="40" font-weight="600" fill="white" text-anchor="middle">mipomodoro</text>
+</svg>
