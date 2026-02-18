@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { FillableVessel } from '@/components/FillableVessel';
