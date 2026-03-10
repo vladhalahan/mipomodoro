@@ -35,15 +35,21 @@ export const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 16,
     color: '#fff',
-    marginBottom: 8,
+    marginBottom: 0,
+  },
+  inputHintSlot: {
+    minHeight: 44,
+    marginBottom: 24,
+    justifyContent: 'center',
   },
   inputHint: {
     fontSize: 13,
     color: '#888',
-    marginBottom: 24,
   },
   actions: {
     gap: 12,
+    marginTop: 32,
+    minHeight: 220,
   },
   btn: {
     paddingVertical: 16,

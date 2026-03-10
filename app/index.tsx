@@ -231,9 +231,11 @@ export default function PomodoroScreen() {
           onChangeText={setTaskName}
           editable={phase === 'idle'}
         />
-        {phase === 'idle' && taskName.trim().length > 0 && taskName.trim().length < MIN_TASK_NAME_LENGTH && (
-          <Text style={styles.inputHint}>Enter at least {MIN_TASK_NAME_LENGTH} characters to start</Text>
-        )}
+        <View style={styles.inputHintSlot}>
+          {phase === 'idle' && taskName.trim().length > 0 && taskName.trim().length < MIN_TASK_NAME_LENGTH && (
+            <Text style={styles.inputHint}>Enter at least {MIN_TASK_NAME_LENGTH} characters to start</Text>
+          )}
+        </View>
 
         {/* Actions */}
         <View style={styles.actions}>
