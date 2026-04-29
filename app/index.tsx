@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -217,6 +218,7 @@ export default function PomodoroScreen() {
       </View>
 
       {/* Input and actions */}
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={16}>
       <View style={styles.bottomSection}>
         {/* Task name */}
         <TextInput
@@ -290,6 +292,7 @@ export default function PomodoroScreen() {
           )}
         </View>
       </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
