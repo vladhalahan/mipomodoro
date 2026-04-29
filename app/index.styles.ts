@@ -5,10 +5,14 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1a1a2e',
   },
-  container: {
+  topSection: {
     flex: 1,
-    paddingHorizontal: 24,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bottomSection: {
+    paddingHorizontal: 24,
+    paddingBottom: 8,
   },
   vesselContainer: {
     alignItems: 'center',
@@ -48,7 +52,6 @@ export const styles = StyleSheet.create({
   },
   actions: {
     gap: 12,
-    marginTop: 32,
     minHeight: 220,
   },
   btn: {

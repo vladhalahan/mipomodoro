@@ -9,7 +9,12 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.timer.productivity.focus.screen.control.spend",
+      "buildNumber": "2",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +32,12 @@
     },
     "plugins": [
       "expo-router",
-      ["expo-notifications", { "defaultChannel": "pomodoro" }],
+      [
+        "expo-notifications",
+        {
+          "defaultChannel": "pomodoro"
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -44,6 +54,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "92d2ae1e-91b8-4d65-b74e-d3cea4d87128"
+      }
     }
   }
 }

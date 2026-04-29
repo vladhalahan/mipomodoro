@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -200,12 +199,8 @@ export default function PomodoroScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={20}
-      >
-        {/* Vessel (coffee) */}
+      {/* Vessel and timer — fixed, never pushed by keyboard */}
+      <View style={styles.topSection}>
         <View style={styles.vesselContainer}>
           <FillableVessel
             mode="coffee"
@@ -213,15 +208,16 @@ export default function PomodoroScreen() {
             phase={isWork ? 'work' : isRest ? 'rest' : 'idle'}
           />
         </View>
-
-        {/* Timer */}
         <View style={styles.timerBlock}>
           <Text style={styles.timeText}>{formatTime(remaining)}</Text>
           {currentPhaseLabel ? (
             <Text style={styles.phaseLabel}>{currentPhaseLabel}</Text>
           ) : null}
         </View>
+      </View>
 
+      {/* Input and actions */}
+      <View style={styles.bottomSection}>
         {/* Task name */}
         <TextInput
           style={styles.input}
@@ -293,7 +289,7 @@ export default function PomodoroScreen() {
             </TouchableOpacity>
           )}
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 }
