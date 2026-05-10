@@ -16,7 +16,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const SPLASH_DURATION_MS = 500;
+const SPLASH_DURATION_MS = 2000;
 
 export default function RootLayout() {
   const [ready, setReady] = useState(false);
