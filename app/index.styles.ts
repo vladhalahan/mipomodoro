@@ -5,6 +5,9 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1a1a2e',
   },
+  keyboardAvoid: {
+    flex: 1,
+  },
   topSection: {
     flexGrow: 1,
     justifyContent: 'center',
@@ -12,7 +15,6 @@ export const styles = StyleSheet.create({
   },
   bottomSection: {
     paddingHorizontal: 24,
-    paddingBottom: 8,
   },
   vesselContainer: {
     alignItems: 'center',
@@ -52,7 +54,6 @@ export const styles = StyleSheet.create({
   },
   actions: {
     gap: 12,
-    minHeight: 220,
   },
   btn: {
     paddingVertical: 16,

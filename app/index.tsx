@@ -7,7 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { FillableVessel } from '@/components/FillableVessel';
@@ -27,6 +27,7 @@ function formatTime(seconds: number): string {
 }
 
 export default function PomodoroScreen() {
+  const insets = useSafeAreaInsets();
   const [taskName, setTaskName] = useState('');
   const [phase, setPhase] = useState<TimerPhase>('idle');
   const [elapsed, setElapsed] = useState(0);
@@ -199,8 +200,12 @@ export default function PomodoroScreen() {
   }, [showCoffeeBreak, showBackToWork]);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-      {/* Vessel and timer — fixed, never pushed by keyboard */}
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoid}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+      {/* Vessel and timer */}
       <View style={styles.topSection}>
         <View style={styles.vesselContainer}>
           <FillableVessel
@@ -218,8 +223,7 @@ export default function PomodoroScreen() {
       </View>
 
       {/* Input and actions */}
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={16}>
-      <View style={styles.bottomSection}>
+      <View style={[styles.bottomSection, { paddingBottom: insets.bottom }]}>
         {/* Task name */}
         <TextInput
           style={styles.input}
@@ -235,51 +239,50 @@ export default function PomodoroScreen() {
           )}
         </View>
 
-        {/* Actions */}
-        <View style={styles.actions}>
-          {phase === 'idle' && (
-            <TouchableOpacity
-              style={[styles.btn, styles.btnPrimary, !canStart && styles.btnPrimaryDisabled]}
-              onPress={startWork}
-              activeOpacity={canStart ? 0.8 : 1}
-              disabled={!canStart}
-            >
-              <Text style={[styles.btnPrimaryText, !canStart && styles.btnPrimaryTextDisabled]}>
-                Start focus
-              </Text>
-            </TouchableOpacity>
-          )}
+        {phase === 'idle' && (
+          <TouchableOpacity
+            style={[styles.btn, styles.btnPrimary, !canStart && styles.btnPrimaryDisabled]}
+            onPress={startWork}
+            activeOpacity={canStart ? 0.8 : 1}
+            disabled={!canStart}
+          >
+            <Text style={[styles.btnPrimaryText, !canStart && styles.btnPrimaryTextDisabled]}>
+              Start focus
+            </Text>
+          </TouchableOpacity>
+        )}
 
-          {isRunning && (
-            <TouchableOpacity
-              style={[styles.btn, styles.btnSecondary]}
-              onPress={pause}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.btnSecondaryText}>Pause</Text>
-            </TouchableOpacity>
-          )}
-
-          {(phase === 'paused_work' || phase === 'paused_rest') && (
-            <>
-              <TouchableOpacity
-                style={[styles.btn, styles.btnPrimary]}
-                onPress={resume}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.btnPrimaryText}>Resume</Text>
-              </TouchableOpacity>
+        {phase !== 'idle' && (
+          <View style={styles.actions}>
+            {isRunning && (
               <TouchableOpacity
                 style={[styles.btn, styles.btnSecondary]}
-                onPress={reset}
+                onPress={pause}
                 activeOpacity={0.8}
               >
-                <Text style={styles.btnSecondaryText}>Reset</Text>
+                <Text style={styles.btnSecondaryText}>Pause</Text>
               </TouchableOpacity>
-            </>
-          )}
+            )}
 
-          {(phase !== 'idle') && (
+            {(phase === 'paused_work' || phase === 'paused_rest') && (
+              <>
+                <TouchableOpacity
+                  style={[styles.btn, styles.btnPrimary]}
+                  onPress={resume}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.btnPrimaryText}>Resume</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.btn, styles.btnSecondary]}
+                  onPress={reset}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.btnSecondaryText}>Reset</Text>
+                </TouchableOpacity>
+              </>
+            )}
+
             <TouchableOpacity
               style={[styles.btn, styles.btnComplete, taskCompleted && styles.btnCompleteDone]}
               onPress={markComplete}
@@ -289,8 +292,8 @@ export default function PomodoroScreen() {
                 {taskCompleted ? '✓ Done' : 'Mark complete'}
               </Text>
             </TouchableOpacity>
-          )}
-        </View>
+          </View>
+        )}
       </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
