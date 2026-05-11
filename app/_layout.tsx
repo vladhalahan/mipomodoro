@@ -22,12 +22,17 @@ export default function RootLayout() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(async () => {
-      await SplashScreen.hideAsync();
+    const timer = setTimeout(() => {
       setReady(true);
     }, SPLASH_DURATION_MS);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (ready) {
+      SplashScreen.hideAsync();
+    }
+  }, [ready]);
 
   if (!ready) return null;
 
