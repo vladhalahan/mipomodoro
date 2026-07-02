@@ -5,6 +5,12 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1a1a2e',
   },
+  statsBtn: {
+    position: 'absolute',
+    right: 16,
+    zIndex: 10,
+    padding: 8,
+  },
   keyboardAvoid: {
     flex: 1,
   },

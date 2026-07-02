@@ -10,6 +10,8 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { FillableVessel } from '@/components/FillableVessel';
 import { styles } from './index.styles';
 import {
@@ -19,6 +21,8 @@ import {
   NOTICE_THRESHOLD,
   type TimerPhase,
 } from '@/constants/pomodoro';
+import { useSessionStorage } from '@/hooks/useSessionStorage';
+import type { SessionRecord } from '@/constants/storage';
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -28,12 +32,17 @@ function formatTime(seconds: number): string {
 
 export default function PomodoroScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const { saveSession } = useSessionStorage();
   const [taskName, setTaskName] = useState('');
   const [phase, setPhase] = useState<TimerPhase>('idle');
   const [elapsed, setElapsed] = useState(0);
   const [taskCompleted, setTaskCompleted] = useState(false);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const noticeShownRef = useRef<'coffee' | 'work' | null>(null);
+  const workStartedAtRef = useRef<number | null>(null);
+  const totalWorkSecRef = useRef<number>(0);
+  const totalRestSecRef = useRef<number>(0);
 
   const isWork = phase === 'work' || phase === 'paused_work';
   const isRest = phase === 'rest' || phase === 'paused_rest';
@@ -101,8 +110,10 @@ export default function PomodoroScreen() {
             tickRef.current = null;
           }
           if (phase === 'work') {
+            totalWorkSecRef.current += next;
             setPhase('rest');
           } else {
+            totalRestSecRef.current += next;
             setPhase('work');
           }
           return 0; // reset elapsed so we don't show negative remaining
@@ -117,6 +128,9 @@ export default function PomodoroScreen() {
 
   const startWork = () => {
     if (!canStart) return;
+    workStartedAtRef.current = Date.now();
+    totalWorkSecRef.current = 0;
+    totalRestSecRef.current = 0;
     setPhase('work');
     setElapsed(0);
     setTaskCompleted(false);
@@ -137,11 +151,25 @@ export default function PomodoroScreen() {
     setTaskCompleted(true);
     const p = phase;
     if (p === 'work' || p === 'paused_work') {
+      totalWorkSecRef.current += elapsed;
       clearTick();
       setPhase('rest');
       setElapsed(0);
     } else if (p === 'rest' || p === 'paused_rest') {
+      totalRestSecRef.current += elapsed;
       clearTick();
+      const record: SessionRecord = {
+        id: Date.now().toString(),
+        taskName: taskName.trim(),
+        startedAt: workStartedAtRef.current ?? Date.now(),
+        completedAt: Date.now(),
+        workDurationSec: totalWorkSecRef.current,
+        restDurationSec: totalRestSecRef.current,
+      };
+      saveSession(record);
+      workStartedAtRef.current = null;
+      totalWorkSecRef.current = 0;
+      totalRestSecRef.current = 0;
       setPhase('idle');
       setElapsed(0);
       setTaskName('');
@@ -150,6 +178,9 @@ export default function PomodoroScreen() {
 
   const reset = () => {
     clearTick();
+    workStartedAtRef.current = null;
+    totalWorkSecRef.current = 0;
+    totalRestSecRef.current = 0;
     setPhase('idle');
     setElapsed(0);
   };
@@ -201,6 +232,13 @@ export default function PomodoroScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
+      <TouchableOpacity
+        style={[styles.statsBtn, { top: insets.top + 4 }]}
+        onPress={() => router.push('/stats')}
+        activeOpacity={0.7}
+      >
+        <Ionicons name="bar-chart-outline" size={22} color="#aaa" />
+      </TouchableOpacity>
       <KeyboardAvoidingView
         style={styles.keyboardAvoid}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
